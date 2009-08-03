@@ -196,14 +196,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\bullet.hpp"
-				>
-			</File>
-			<File
-				RelativePath=".\cloud.hpp"
-				>
-			</File>
-			<File
 				RelativePath=".\config.hpp"
 				>
 			</File>
@@ -240,15 +232,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\fujin.hpp"
-				>
-			</File>
-			<File
 				RelativePath=".\game.hpp"
-				>
-			</File>
-			<File
-				RelativePath=".\girder.hpp"
 				>
 			</File>
 			<File
@@ -291,14 +275,6 @@
 			>
 			<File
 				RelativePath=".\TetrisDeconstructed.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\bullet.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\cloud.cpp"
 				>
 			</File>
 			<File
@@ -386,15 +362,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\fujin.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\game.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\girder.cpp"
 				>
 			</File>
 			<File
