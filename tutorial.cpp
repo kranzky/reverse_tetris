@@ -86,7 +86,10 @@ Tutorial::render()
           body = body->GetNext() )
     {
         Entity * entity( static_cast< Entity * >( body->GetUserData() ) );
-        entity->render( scale );
+        if ( entity )
+        {
+            entity->render( scale );
+        }
     }
 
     Engine::vp()->reset();

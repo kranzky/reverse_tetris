@@ -27,12 +27,16 @@ Sprite title
 Sprite developer
 {
     texture=developer
-    rect=0,0,500,459
-    hotspot=250,229
+    rect=0,0,1024,768
+    hotspot=512,384
 }
 Sprite cursor
 {
     texture=cursor
     rect=0,0,32,32
     hotspot=16,16
+}
+Sound theme
+{
+    filename=theme.mp3
 }

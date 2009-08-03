@@ -290,7 +290,7 @@ Score::render()
         }
         case SCORE_CALCULATE:
         {
-            font->printf( cx, 80.0f, HGETEXT_CENTER, "B A A A A A A R G H !" );
+            font->printf( cx, 80.0f, HGETEXT_CENTER, "G E T   R E A D Y !" );
             break;
         }
         case SCORE_SHOW:
@@ -313,7 +313,7 @@ Score::render()
             else
             {
                 font->printf( cx, 2.0f * cy - 60.0f, HGETEXT_CENTER,
-                              "Y O U   H E R D   P R O P E R L Y" );
+                              "N I C E   W O R K" );
             }
             if ( config.leaderboard )
             {

@@ -8,13 +8,13 @@
 //------------------------------------------------------------------------------
 Config::Config()
     :
-    screenWidth( 1280 ),
-    screenHeight( 720 ),
+    screenWidth( 800 ),
+    screenHeight( 600 ),
     bpp( 32 ),
 #ifdef _DEBUG
     fullScreen( false ),
 #else
-    fullScreen( true ),
+    fullScreen( false ),
 #endif
     sound( true ),
     userName( "Lloyd" ),

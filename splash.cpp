@@ -39,7 +39,9 @@ Splash::fini()
 bool
 Splash::update( float dt )
 {
-    if ( m_timer > 5.0f )
+    m_timer = Engine::hge()->Channel_GetPos( Engine::instance()->getChannel() );
+
+    if ( m_timer > 5.3f )
     {
         Engine::instance()->switchContext( STATE_MENU );
     }
@@ -56,6 +58,13 @@ Splash::render()
     hgeResourceManager * rm( Engine::rm() );
     hgeSprite * sprite( 0 );
 
+    if ( m_timer < 1.5f )
+    {
+        setColour( 0xFF000000 );
+        setBorder( 0xFF000000 );
+        return;
+    }
+
     float width( Engine::vp()->screen().x );
     float height( Engine::vp()->screen().y );
 
@@ -63,7 +72,8 @@ Splash::render()
     setBorder( 0xFF000000 );
     sprite = rm->GetSprite( "developer" );
 
-    sprite->RenderEx( 0.5f * width, 0.5f * height, 0.0f, 1.0f );
+    float scale( 0.7f + m_timer / 40.0f );
+    sprite->RenderEx( 0.5f * width, 0.5f * height, 0.0f, scale );
 }
 
 //==============================================================================

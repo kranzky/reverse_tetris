@@ -157,11 +157,7 @@ Engine::start()
     {
         _loadData();
         init();
-#ifdef _DEBUG
-        switchContext( STATE_HELP );
-#else
         switchContext( STATE_SPLASH );
-#endif
         m_hge->System_Start();
     }
     else
@@ -196,7 +192,7 @@ Engine::init()
 
     m_hge->Random_Seed();
 
-    m_channel = m_hge->Effect_PlayEx( m_rm->GetEffect( "music" ),
+    m_channel = m_hge->Effect_PlayEx( m_rm->GetEffect( "theme" ),
                                       100, 0, 0, true );
 }
 
@@ -732,11 +728,10 @@ Engine::_initGraphics()
     m_hge->System_SetState( HGE_FRAMEFUNC, s_update );
     m_hge->System_SetState( HGE_RENDERFUNC, s_render );
     m_hge->System_SetState( HGE_EXITFUNC, s_exit );
-    m_hge->System_SetState( HGE_TITLE, "+++ 9 9 S H E E P v0.9 +++" );
+    m_hge->System_SetState( HGE_TITLE, "+++ T E T R I S D E C O N S T R U C T E D v0.1 +++" );
     m_hge->System_SetState( HGE_ICON, MAKEINTRESOURCE( IDI_ICON1 ) );
     m_hge->System_SetState( HGE_SHOWSPLASH, false );
     m_hge->System_SetState( HGE_FPS, HGEFPS_UNLIMITED );
-    //m_hge->System_SetState( HGE_TEXTUREFILTER, false );
 
     m_config.init();
     _setBestScreenMode();
