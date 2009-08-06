@@ -31,7 +31,8 @@ Game::Game()
     Context(),
     m_arena(),
     m_piece(),
-    m_index( 0 )
+    m_index( 0 ),
+    m_rotate( 0 )
 {
 }
 
@@ -73,6 +74,7 @@ Game::init()
     clearPiece();
 
     m_index = 0;
+    m_rotate = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -95,7 +97,33 @@ Game::update( float dt )
     clearPiece();
     for ( int i = 0; i < 8; i += 2 )
     {
-        m_piece[PIECE[m_index][i]][PIECE[m_index][i+1]]= true;
+        int x( PIECE[m_index][i] ), y( PIECE[m_index][i+1] );
+        for ( int j = 0; j < m_rotate; ++j )
+        {
+            b2Swap( x, y );
+            y = 3 - y;
+        }
+        m_piece[x][y]= true;
+    }
+
+    if ( ! paused && pad.isConnected() )
+    {
+        if ( pad.buttonDown( XPAD_BUTTON_LEFT_SHOULDER ) )
+        {
+            m_index = ( m_index + 6 ) % 7;
+        }
+        if ( pad.buttonDown( XPAD_BUTTON_RIGHT_SHOULDER ) )
+        {
+            m_index = ( m_index + 1 ) % 7;
+        }
+        if ( pad.buttonDown( XPAD_BUTTON_DPAD_UP ) )
+        {
+            m_rotate = ( m_rotate + 3 ) % 4;
+        }
+        if ( pad.buttonDown( XPAD_BUTTON_DPAD_DOWN ) )
+        {
+            m_rotate = ( m_rotate + 1 ) % 4;
+        }
     }
 
     return false;

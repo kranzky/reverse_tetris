@@ -33,6 +33,7 @@ class Game : public Context
     bool m_arena[10][20];
     bool m_piece[4][4];
     int m_index;
+    int m_rotate;
 };
 
 #endif
