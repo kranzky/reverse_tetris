@@ -109,7 +109,7 @@ Game::render()
         for ( int y = 0; y < 20; ++y )
         {
             hgeSprite * sprite( m_arena[x][y] ? white : black );
-            sprite->RenderEx( ( x - 4.5  ) * 3.2f, ( y - 9.5 ) * 3.2f,
+            sprite->RenderEx( ( x - 4.5f  ) * 3.2f, ( y - 9.5f ) * 3.2f,
                               0.0f, 0.1f );
         }
     }
