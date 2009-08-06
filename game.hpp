@@ -28,6 +28,7 @@ class Game : public Context
     virtual void render();
 
   private:
+    bool m_arena[10][20];
 };
 
 #endif

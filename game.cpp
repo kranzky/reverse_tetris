@@ -15,7 +15,8 @@
 //==============================================================================
 Game::Game()
     :
-    Context()
+    Context(),
+    m_arena()
 {
 }
 
@@ -45,6 +46,14 @@ Game::init()
     vp->bounds().y = 720.0f;
     vp->setAngle( 0.0f );
     vp->setScale( 10.0f );
+    
+    for ( int x = 0; x < 10; ++x )
+    {
+        for ( int y = 0; y < 20; ++y )
+        {
+            m_arena[x][y] = false;
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -91,6 +100,19 @@ Game::render()
 
     Engine::vp()->reset();
     vp->setTransform();
+
+    hgeSprite * black( rm->GetSprite( "empty" ) );
+    hgeSprite * white( rm->GetSprite( "tile" ) );
+
+    for ( int x = 0; x < 10; ++x )
+    {
+        for ( int y = 0; y < 20; ++y )
+        {
+            hgeSprite * sprite( m_arena[x][y] ? white : black );
+            sprite->RenderEx( ( x - 4.5  ) * 3.2f, ( y - 9.5 ) * 3.2f,
+                              0.0f, 0.1f );
+        }
+    }
 }
 
 //==============================================================================

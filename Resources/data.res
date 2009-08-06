@@ -10,6 +10,14 @@ Texture cursor
 {
     filename=cursor.png
 }
+Texture tile
+{
+    filename=tile.png
+}
+Texture empty
+{
+    filename=empty.png
+}
 Font menu
 {
     filename=menu.fnt
@@ -33,6 +41,18 @@ Sprite developer
 Sprite cursor
 {
     texture=cursor
+    rect=0,0,32,32
+    hotspot=16,16
+}
+Sprite tile
+{
+    texture=tile
+    rect=0,0,32,32
+    hotspot=16,16
+}
+Sprite empty
+{
+    texture=empty
     rect=0,0,32,32
     hotspot=16,16
 }
