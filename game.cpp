@@ -12,11 +12,26 @@
 #include <algorithm>
 #include <set>
 
+namespace
+{
+    int PIECE[7][8] = {
+        { 0,1,1,1,2,1,3,1 },    // I
+        { 0,1,0,2,1,2,2,2 },    // J
+        { 1,2,2,2,3,2,3,1 },    // L
+        { 1,1,1,2,2,1,2,2 },    // O
+        { 0,2,1,2,1,1,2,1 },    // S
+        { 0,1,1,1,2,1,1,2 },    // T
+        { 1,1,2,1,2,2,3,2 }     // Z
+    };
+}
+
 //==============================================================================
 Game::Game()
     :
     Context(),
-    m_arena()
+    m_arena(),
+    m_piece(),
+    m_index( 0 )
 {
 }
 
@@ -54,6 +69,10 @@ Game::init()
             m_arena[x][y] = false;
         }
     }
+
+    clearPiece();
+
+    m_index = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -72,6 +91,12 @@ Game::update( float dt )
     ViewPort * vp( Engine::vp() );
 
     bool paused( Engine::instance()->isPaused() );
+
+    clearPiece();
+    for ( int i = 0; i < 8; i += 2 )
+    {
+        m_piece[PIECE[m_index][i]][PIECE[m_index][i+1]]= true;
+    }
 
     return false;
 }
@@ -109,8 +134,34 @@ Game::render()
         for ( int y = 0; y < 20; ++y )
         {
             hgeSprite * sprite( m_arena[x][y] ? white : black );
-            sprite->RenderEx( ( x - 4.5f  ) * 3.2f, ( y - 9.5f ) * 3.2f,
+            sprite->RenderEx( ( x - 4.5f  ) * 3.2f,
+                              ( y - 9.5f ) * 3.2f,
                               0.0f, 0.1f );
+        }
+    }
+    for ( int x = 0; x < 4; ++x )
+    {
+        for ( int y = 0; y < 4; ++y )
+        {
+            hgeSprite * sprite( m_piece[x][y] ? white : black );
+            sprite->RenderEx( ( x - 1.5f + 12.0f ) * 3.2f,
+                              ( y - 1.5f ) * 3.2f,
+                              0.0f, 0.1f );
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+//private:
+//------------------------------------------------------------------------------
+void
+Game::clearPiece()
+{
+    for ( int x = 0; x < 4; ++x )
+    {
+        for ( int y = 0; y < 4; ++y )
+        {
+            m_piece[x][y] = false;
         }
     }
 }
