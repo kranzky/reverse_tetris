@@ -34,6 +34,8 @@ class Game : public Context
     bool m_piece[4][4];
     int m_index;
     int m_rotate;
+    int m_col;
+    int m_row;
 };
 
 #endif

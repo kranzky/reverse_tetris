@@ -32,7 +32,9 @@ Game::Game()
     m_arena(),
     m_piece(),
     m_index( 0 ),
-    m_rotate( 0 )
+    m_rotate( 0 ),
+    m_col( 6 ),
+    m_row( 0 )
 {
 }
 
@@ -75,6 +77,8 @@ Game::init()
 
     m_index = 0;
     m_rotate = 0;
+    m_col = 6;
+    m_row = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -128,6 +132,14 @@ Game::update( float dt )
         {
             m_rotate = ( m_rotate + 1 ) % 4;
         }
+        if ( pad.buttonDown( XPAD_BUTTON_DPAD_LEFT ) )
+        {
+            m_col = ( m_col + 12 ) % 13;
+        }
+        if ( pad.buttonDown( XPAD_BUTTON_DPAD_RIGHT ) )
+        {
+            m_col = ( m_col + 1 ) % 13;
+        }
     }
     else
     {
@@ -139,13 +151,29 @@ Game::update( float dt )
         {
             m_index = ( m_index + 1 ) % 7;
         }
-        if ( Engine::hge()->Input_KeyDown( HGEK_UP ) )
+        if ( Engine::hge()->Input_KeyDown( HGEK_W ) )
         {
             m_rotate = ( m_rotate + 3 ) % 4;
         }
-        if ( Engine::hge()->Input_KeyDown( HGEK_DOWN ) )
+        if ( Engine::hge()->Input_KeyDown( HGEK_S ) )
         {
             m_rotate = ( m_rotate + 1 ) % 4;
+        }
+        if ( Engine::hge()->Input_KeyDown( HGEK_UP ) )
+        {
+            m_row = ( m_row + 19 ) % 20;
+        }
+        if ( Engine::hge()->Input_KeyDown( HGEK_DOWN ) )
+        {
+            m_row = ( m_row + 1 ) % 20;
+        }
+        if ( Engine::hge()->Input_KeyDown( HGEK_LEFT ) )
+        {
+            m_col = ( m_col + 12 ) % 13;
+        }
+        if ( Engine::hge()->Input_KeyDown( HGEK_RIGHT ) )
+        {
+            m_col = ( m_col + 1 ) % 13;
         }
     }
 
@@ -197,6 +225,16 @@ Game::render()
             hgeSprite * sprite( m_piece[x][y] ? white : black );
             sprite->RenderEx( ( x - 1.5f + 12.0f ) * 3.2f,
                               ( y - 1.5f ) * 3.2f,
+                              0.0f, 0.1f );
+        }
+    }
+    for ( int x = 0; x < 4; ++x )
+    {
+        for ( int y = 0; y < 4; ++y )
+        {
+            hgeSprite * sprite( m_piece[x][y] ? white : black );
+            sprite->RenderEx( ( m_col + x - 7.5f ) * 3.2f,
+                              ( m_row + y - 9.5f ) * 3.2f,
                               0.0f, 0.1f );
         }
     }
