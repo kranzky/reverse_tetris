@@ -15,13 +15,13 @@
 namespace
 {
     int PIECE[7][8] = {
-        { 0,1,1,1,2,1,3,1 },    // I
-        { 0,1,0,2,1,2,2,2 },    // J
-        { 1,2,2,2,3,2,3,1 },    // L
-        { 1,1,1,2,2,1,2,2 },    // O
-        { 0,2,1,2,1,1,2,1 },    // S
-        { 0,1,1,1,2,1,1,2 },    // T
-        { 1,1,2,1,2,2,3,2 }     // Z
+        { 0,0,1,0,2,0,3,0 },    // I
+        { 0,0,0,1,1,1,2,1 },    // J
+        { 1,1,2,1,3,1,3,0 },    // L
+        { 1,0,1,1,2,0,2,1 },    // O
+        { 0,1,1,1,1,0,2,0 },    // S
+        { 0,0,1,0,2,0,1,1 },    // T
+        { 1,0,2,0,2,1,3,1 }     // Z
     };
 }
 
@@ -92,12 +92,16 @@ Game::update( float dt )
     HGE * hge( Engine::hge() );
     ViewPort * vp( Engine::vp() );
 
-    bool paused( Engine::instance()->isPaused() );
+    if ( Engine::instance()->isPaused() )
+    {
+        return false;
+    }
 
     clearPiece();
+
     for ( int i = 0; i < 8; i += 2 )
     {
-        int x( PIECE[m_index][i] ), y( PIECE[m_index][i+1] );
+        int x( PIECE[m_index][i] ), y( PIECE[m_index][i+1] + 1 );
         for ( int j = 0; j < m_rotate; ++j )
         {
             b2Swap( x, y );
@@ -106,7 +110,7 @@ Game::update( float dt )
         m_piece[x][y]= true;
     }
 
-    if ( ! paused && pad.isConnected() )
+    if ( pad.isConnected() )
     {
         if ( pad.buttonDown( XPAD_BUTTON_LEFT_SHOULDER ) )
         {
@@ -121,6 +125,25 @@ Game::update( float dt )
             m_rotate = ( m_rotate + 3 ) % 4;
         }
         if ( pad.buttonDown( XPAD_BUTTON_DPAD_DOWN ) )
+        {
+            m_rotate = ( m_rotate + 1 ) % 4;
+        }
+    }
+    else
+    {
+        if ( Engine::hge()->Input_KeyDown( HGEK_A ) )
+        {
+            m_index = ( m_index + 6 ) % 7;
+        }
+        if ( Engine::hge()->Input_KeyDown( HGEK_D ) )
+        {
+            m_index = ( m_index + 1 ) % 7;
+        }
+        if ( Engine::hge()->Input_KeyDown( HGEK_UP ) )
+        {
+            m_rotate = ( m_rotate + 3 ) % 4;
+        }
+        if ( Engine::hge()->Input_KeyDown( HGEK_DOWN ) )
         {
             m_rotate = ( m_rotate + 1 ) % 4;
         }
