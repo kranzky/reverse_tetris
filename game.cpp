@@ -187,7 +187,7 @@ Game::update( float dt )
             {
                 if ( m_piece[x][y] )
                 {
-                    m_col += 1;
+                    m_col += ( 3 - m_col - x );
                     goto done_left_check;
                 }
             }
@@ -202,7 +202,7 @@ done_left_check:
             {
                 if ( m_piece[x][y] )
                 {
-                    m_row += 1;
+                    m_row += ( 3 - m_row - y );
                     goto done_top_check;
                 }
             }
@@ -217,7 +217,7 @@ done_top_check:
             {
                 if ( m_piece[x][y] )
                 {
-                    m_col -= 1;
+                    m_col -= ( x - 12 + m_col );
                     goto done_right_check;
                 }
             }
@@ -232,7 +232,7 @@ done_right_check:
             {
                 if ( m_piece[x][y] )
                 {
-                    m_row -= 1;
+                    m_row -= ( y - 22 + m_row );
                     goto done_bot_check;
                 }
             }
