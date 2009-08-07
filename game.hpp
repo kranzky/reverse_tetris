@@ -30,6 +30,7 @@ class Game : public Context
   private:
     void clearPiece();
 
+    bool m_buffer[10][20];
     bool m_arena[10][20];
     bool m_piece[4][4];
     int m_index;

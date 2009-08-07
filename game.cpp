@@ -30,11 +30,12 @@ Game::Game()
     :
     Context(),
     m_arena(),
+    m_buffer(),
     m_piece(),
     m_index( 0 ),
     m_rotate( 0 ),
     m_col( 6 ),
-    m_row( 0 )
+    m_row( 1 )
 {
 }
 
@@ -70,6 +71,7 @@ Game::init()
         for ( int y = 0; y < 20; ++y )
         {
             m_arena[x][y] = false;
+            m_buffer[x][y] = false;
         }
     }
 
@@ -78,7 +80,7 @@ Game::init()
     m_index = 0;
     m_rotate = 0;
     m_col = 6;
-    m_row = 0;
+    m_row = 1;
 }
 
 //------------------------------------------------------------------------------
@@ -161,11 +163,11 @@ Game::update( float dt )
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_UP ) )
         {
-            m_row = ( m_row + 19 ) % 20;
+            m_row = ( m_row + 22 ) % 23;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_DOWN ) )
         {
-            m_row = ( m_row + 1 ) % 20;
+            m_row = ( m_row + 1 ) % 23;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_LEFT ) )
         {
@@ -174,6 +176,85 @@ Game::update( float dt )
         if ( Engine::hge()->Input_KeyDown( HGEK_RIGHT ) )
         {
             m_col = ( m_col + 1 ) % 13;
+        }
+    }
+
+    if ( m_col < 3 )
+    {
+        for ( int x = 0; x < 3 - m_col; ++x )
+        {
+            for ( int y = 0; y < 4; ++y )
+            {
+                if ( m_piece[x][y] )
+                {
+                    m_col += 1;
+                    goto done_left_check;
+                }
+            }
+        }
+    }
+done_left_check:
+    if ( m_row < 3 )
+    {
+        for ( int x = 0; x < 4; ++x )
+        {
+            for ( int y = 0; y < 3 - m_row; ++y )
+            {
+                if ( m_piece[x][y] )
+                {
+                    m_row += 1;
+                    goto done_top_check;
+                }
+            }
+        }
+    }
+done_top_check:
+    if ( m_col > 9 )
+    {
+        for ( int x = 3; x > 12 - m_col; --x )
+        {
+            for ( int y = 0; y < 4; ++y )
+            {
+                if ( m_piece[x][y] )
+                {
+                    m_col -= 1;
+                    goto done_right_check;
+                }
+            }
+        }
+    }
+done_right_check:
+    if ( m_row > 19 )
+    {
+        for ( int x = 0; x < 4; ++x )
+        {
+            for ( int y = 3; y > 22 - m_row; --y )
+            {
+                if ( m_piece[x][y] )
+                {
+                    m_row -= 1;
+                    goto done_bot_check;
+                }
+            }
+        }
+    }
+done_bot_check:
+    for ( int x = 0; x < 10; ++x )
+    {
+        for ( int y = 0; y < 20; ++y )
+        {
+            m_buffer[x][y] = m_arena[x][y];
+        }
+    }
+    for ( int x = 0; x < 4; ++x )
+    {
+        for ( int y = 0; y < 4; ++y )
+        {
+            if ( ! m_piece[x][y] )
+            {
+                continue;
+            }
+            m_buffer[m_col + x - 3][m_row + y - 3] = true;
         }
     }
 
@@ -212,7 +293,7 @@ Game::render()
     {
         for ( int y = 0; y < 20; ++y )
         {
-            hgeSprite * sprite( m_arena[x][y] ? white : black );
+            hgeSprite * sprite( m_buffer[x][y] ? white : black );
             sprite->RenderEx( ( x - 4.5f  ) * 3.2f,
                               ( y - 9.5f ) * 3.2f,
                               0.0f, 0.1f );
@@ -225,16 +306,6 @@ Game::render()
             hgeSprite * sprite( m_piece[x][y] ? white : black );
             sprite->RenderEx( ( x - 1.5f + 12.0f ) * 3.2f,
                               ( y - 1.5f ) * 3.2f,
-                              0.0f, 0.1f );
-        }
-    }
-    for ( int x = 0; x < 4; ++x )
-    {
-        for ( int y = 0; y < 4; ++y )
-        {
-            hgeSprite * sprite( m_piece[x][y] ? white : black );
-            sprite->RenderEx( ( m_col + x - 7.5f ) * 3.2f,
-                              ( m_row + y - 9.5f ) * 3.2f,
                               0.0f, 0.1f );
         }
     }
