@@ -28,6 +28,7 @@ class Game : public Context
     virtual void render();
 
   private:
+    void clearArena();
     void clearPiece();
     void checkBorders();
     bool checkLeft();
@@ -47,6 +48,10 @@ class Game : public Context
     int m_rotate;
     int m_col;
     int m_row;
+    int m_replay[1000][4];
+    int m_num;
+    bool m_replaying;
+    float m_timer;
 };
 
 #endif

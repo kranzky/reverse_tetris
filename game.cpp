@@ -35,7 +35,11 @@ Game::Game()
     m_index( 0 ),
     m_rotate( 0 ),
     m_col( 6 ),
-    m_row( 1 )
+    m_row( 1 ),
+    m_replay(),
+    m_num( 0 ),
+    m_replaying( false ),
+    m_timer( 0.0f )
 {
 }
 
@@ -66,27 +70,16 @@ Game::init()
     vp->setAngle( 0.0f );
     vp->setScale( 10.0f );
     
-    for ( int x = 0; x < 10; ++x )
-    {
-        for ( int y = 0; y < 20; ++y )
-        {
-            m_arena[x][y] = false;
-            m_buffer[x][y] = false;
-            /*
-            if ( y > 15 )
-            {
-                m_arena[x][y] = ( hge->Random_Int( 0, 1 ) == 0 );
-            }
-            */
-        }
-    }
-
+    clearArena();
     clearPiece();
 
     m_index = 0;
     m_rotate = 0;
     m_col = 6;
     m_row = 1;
+    m_num = 0;
+    m_replaying = false;
+    m_timer = 0.0f;
 }
 
 //------------------------------------------------------------------------------
@@ -109,8 +102,41 @@ Game::update( float dt )
         return false;
     }
 
-    if ( pad.isConnected() )
+    if ( m_replaying )
     {
+        m_timer += dt;
+        if ( m_timer < 0.2f )
+        {
+            return false;
+        }
+        if ( m_row == 1 )
+        {
+            if ( m_num == 0 )
+            {
+                m_replaying = false;
+            }
+            else
+            {
+                --m_num;
+                m_index = m_replay[m_num][0];
+                m_rotate = m_replay[m_num][1];
+                m_col = m_replay[m_num][3];
+                ++m_row;
+            }
+        }
+        else
+        {
+            ++m_row;
+        }
+    }
+    else if ( pad.isConnected() )
+    {
+        if ( pad.buttonDown( XPAD_BUTTON_BUTTON_Y ) )
+        {
+            m_replaying = true;
+            m_row = 1;
+            clearArena();
+        }
         if ( pad.buttonDown( XPAD_BUTTON_X ) )
         {
             m_index = ( m_index + 6 ) % 7;
@@ -146,6 +172,12 @@ Game::update( float dt )
     }
     else
     {
+        if ( Engine::hge()->Input_KeyDown( HGEK_R ) )
+        {
+            m_replaying = true;
+            m_row = 1;
+            clearArena();
+        }
         if ( Engine::hge()->Input_KeyDown( HGEK_A ) )
         {
             m_index = ( m_index + 6 ) % 7;
@@ -193,8 +225,6 @@ Game::update( float dt )
         m_piece[x][y]= true;
     }
 
-    checkBorders();
-   
     for ( int x = 0; x < 10; ++x )
     {
         for ( int y = 0; y < 20; ++y )
@@ -203,6 +233,28 @@ Game::update( float dt )
         }
     }
 
+    if ( m_replaying )
+    {
+        if ( m_row == m_replay[m_num][2] )
+        {
+            m_row = 1;
+            for ( int y = 0; y < 4; ++y )
+            {
+                for ( int x = 0; x < 4; ++x )
+                {
+                    if ( ! m_piece[x][y] )
+                    {
+                        continue;
+                    }
+                    m_arena[m_col + x - 3][m_row + y - 3] = true;
+                }
+            }
+        }
+        return false;
+    }
+
+    checkBorders();
+   
     // If the piece has space beneath it, then fall down until we either hit the
     // bottom or there is something below us.
     while( ! checkBottom() && blankBelow() )
@@ -319,6 +371,26 @@ Game::render()
 
 //------------------------------------------------------------------------------
 //private:
+//------------------------------------------------------------------------------
+void
+Game::clearArena()
+{
+    for ( int x = 0; x < 10; ++x )
+    {
+        for ( int y = 0; y < 20; ++y )
+        {
+            m_arena[x][y] = false;
+            m_buffer[x][y] = false;
+            /*
+            if ( y > 15 )
+            {
+                m_arena[x][y] = ( hge->Random_Int( 0, 1 ) == 0 );
+            }
+            */
+        }
+    }
+}
+
 //------------------------------------------------------------------------------
 void
 Game::clearPiece()
@@ -503,6 +575,11 @@ Game::removePiece()
     {
         return;
     }
+    m_replay[m_num][0] = m_index;
+    m_replay[m_num][1] = m_rotate;
+    m_replay[m_num][2] = m_row;
+    m_replay[m_num][3] = m_col;
+    m_num += 1;
     for ( int x = 0; x < 4; ++x )
     {
         for ( int y = 0; y < 4; ++y )
@@ -537,12 +614,23 @@ Game::removePiece()
             }
         }
     }
+    int count( 0 );
     for ( int x = 0; x < 10; ++x )
     {
         for ( int y = 0; y < 20; ++y )
         {
             m_arena[x][y] = m_buffer[x][y];
+            if ( m_arena[x][y] )
+            {
+                count += 1;
+            }
         }
+    }
+    if ( count == 0 )
+    {
+        m_replaying = true;
+        m_row = 1;
+        clearArena();
     }
 }
 
