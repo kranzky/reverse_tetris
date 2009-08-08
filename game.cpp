@@ -72,10 +72,12 @@ Game::init()
         {
             m_arena[x][y] = false;
             m_buffer[x][y] = false;
+            /*
             if ( y > 15 )
             {
                 m_arena[x][y] = ( hge->Random_Int( 0, 1 ) == 0 );
             }
+            */
         }
     }
 
@@ -112,22 +114,18 @@ Game::update( float dt )
         if ( pad.buttonDown( XPAD_BUTTON_X ) )
         {
             m_index = ( m_index + 6 ) % 7;
-            m_row = 1;
         }
         if ( pad.buttonDown( XPAD_BUTTON_B ) )
         {
             m_index = ( m_index + 1 ) % 7;
-            m_row = 1;
         }
         if ( pad.buttonDown( XPAD_BUTTON_LEFT_SHOULDER ) )
         {
             m_rotate = ( m_rotate + 3 ) % 4;
-            m_row = 1;
         }
         if ( pad.buttonDown( XPAD_BUTTON_RIGHT_SHOULDER ) )
         {
             m_rotate = ( m_rotate + 1 ) % 4;
-            m_row = 1;
         }
         if ( pad.buttonDown( XPAD_BUTTON_DPAD_UP ) )
         {
@@ -140,12 +138,10 @@ Game::update( float dt )
         if ( pad.buttonDown( XPAD_BUTTON_DPAD_LEFT ) )
         {
             m_col = ( m_col + 12 ) % 13;
-            m_row = 1;
         }
         if ( pad.buttonDown( XPAD_BUTTON_DPAD_RIGHT ) )
         {
             m_col = ( m_col + 1 ) % 13;
-            m_row = 1;
         }
     }
     else
@@ -153,22 +149,18 @@ Game::update( float dt )
         if ( Engine::hge()->Input_KeyDown( HGEK_A ) )
         {
             m_index = ( m_index + 6 ) % 7;
-            m_row = 1;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_D ) )
         {
             m_index = ( m_index + 1 ) % 7;
-            m_row = 1;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_W ) )
         {
             m_rotate = ( m_rotate + 3 ) % 4;
-            m_row = 1;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_S ) )
         {
             m_rotate = ( m_rotate + 1 ) % 4;
-            m_row = 1;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_UP ) )
         {
@@ -181,12 +173,10 @@ Game::update( float dt )
         if ( Engine::hge()->Input_KeyDown( HGEK_LEFT ) )
         {
             m_col = ( m_col + 12 ) % 13;
-            m_row = 1;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_RIGHT ) )
         {
             m_col = ( m_col + 1 ) % 13;
-            m_row = 1;
         }
     }
 
@@ -221,6 +211,7 @@ Game::update( float dt )
     }
 
     // Add rows, starting at the bottom, to accomodate the piece
+    addRows();
 
     return false;
 }
@@ -254,9 +245,26 @@ Game::render()
     hgeSprite * white( rm->GetSprite( "tile" ) );
 
     white->SetColor( 0xFFFFFFFF );
-    for ( int x = 0; x < 10; ++x )
+    for ( int y = 0; y < 20; ++y )
     {
-        for ( int y = 0; y < 20; ++y )
+        int count( 0 );
+        for ( int x = 0; x < 10; ++x )
+        {
+            if ( ! m_buffer[x][y] )
+            {
+                break;
+            }
+            count += 1;
+        }
+        if ( count == 10 )
+        {
+            white->SetColor( 0x8888FFFF );
+        }
+        else
+        {
+            white->SetColor( 0xFFFFFFFF );
+        }
+        for ( int x = 0; x < 10; ++x )
         {
             hgeSprite * sprite( m_buffer[x][y] ? white : black );
             sprite->RenderEx( ( x - 4.5f  ) * 3.2f,
@@ -433,6 +441,41 @@ Game::blankBelow()
     }
 
     return true;
+}
+
+//------------------------------------------------------------------------------
+void
+Game::addRows()
+{
+    for ( int y = 3; y >= 0; --y )
+    {
+        for ( int x = 0; x < 4; ++x )
+        {
+            if ( ! m_piece[x][y] || m_buffer[m_col + x - 3][m_row + y - 3] )
+            {
+                continue;
+            }
+            insertRow( m_row + y - 3 );
+            break;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+void
+Game::insertRow( int row )
+{
+    for ( int y = 1; y <= row; ++y )
+    {
+        for ( int x = 0; x < 10; ++x )
+        {    
+            m_buffer[x][y-1] = m_buffer[x][y];
+        }
+    }
+    for ( int x = 0; x < 10; ++x )
+    {
+        m_buffer[x][row] = true;
+    }
 }
 
 //==============================================================================
