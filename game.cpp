@@ -118,21 +118,29 @@ Game::update( float dt )
 
     if ( pad.isConnected() )
     {
-        if ( pad.buttonDown( XPAD_BUTTON_LEFT_SHOULDER ) )
+        if ( pad.buttonDown( XPAD_BUTTON_X ) )
         {
             m_index = ( m_index + 6 ) % 7;
         }
-        if ( pad.buttonDown( XPAD_BUTTON_RIGHT_SHOULDER ) )
+        if ( pad.buttonDown( XPAD_BUTTON_B ) )
         {
             m_index = ( m_index + 1 ) % 7;
         }
-        if ( pad.buttonDown( XPAD_BUTTON_DPAD_UP ) )
+        if ( pad.buttonDown( XPAD_BUTTON_LEFT_SHOULDER ) )
         {
             m_rotate = ( m_rotate + 3 ) % 4;
         }
-        if ( pad.buttonDown( XPAD_BUTTON_DPAD_DOWN ) )
+        if ( pad.buttonDown( XPAD_BUTTON_RIGHT_SHOULDER ) )
         {
             m_rotate = ( m_rotate + 1 ) % 4;
+        }
+        if ( pad.buttonDown( XPAD_BUTTON_DPAD_UP ) )
+        {
+            m_row = ( m_row + 22 ) % 23;
+        }
+        if ( pad.buttonDown( XPAD_BUTTON_DPAD_DOWN ) )
+        {
+            m_row = ( m_row + 1 ) % 23;
         }
         if ( pad.buttonDown( XPAD_BUTTON_DPAD_LEFT ) )
         {
