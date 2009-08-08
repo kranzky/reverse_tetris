@@ -37,6 +37,8 @@ class Game : public Context
     bool blankBelow();
     void addRows();
     void insertRow( int row );
+    void removePiece();
+    bool isClear();
 
     bool m_buffer[10][20];
     bool m_arena[10][20];

@@ -213,6 +213,23 @@ Game::update( float dt )
     // Add rows, starting at the bottom, to accomodate the piece
     addRows();
 
+    // If the user presses the button, check if the piece has nothing blocking
+    // it above. If it doesn't, remove it.
+    if ( pad.isConnected() )
+    {
+        if ( pad.buttonDown( XPAD_BUTTON_A ) )
+        {
+            removePiece();
+        }
+    }
+    else
+    {
+        if ( Engine::hge()->Input_KeyDown( HGEK_SPACE ) )
+        {
+            removePiece();
+        }
+    }
+
     return false;
 }
 
@@ -254,7 +271,7 @@ Game::render()
             {
                 break;
             }
-            count += 1;
+            ++count;
         }
         if ( count == 10 )
         {
@@ -476,6 +493,83 @@ Game::insertRow( int row )
     {
         m_buffer[x][row] = true;
     }
+}
+
+//------------------------------------------------------------------------------
+void
+Game::removePiece()
+{
+    if ( ! isClear() )
+    {
+        return;
+    }
+    for ( int x = 0; x < 4; ++x )
+    {
+        for ( int y = 0; y < 4; ++y )
+        {
+            if ( ! m_piece[x][y] )
+            {
+                continue;
+            }
+            m_buffer[m_col + x - 3][m_row + y - 3] = false;
+        }
+    }
+    for ( int y = 19; y > 0; --y )
+    {
+        int count( 0 );
+        for ( int x = 0; x < 10; ++x )
+        {
+            if ( m_buffer[x][y] )
+            {
+                break;
+            }
+            ++count;
+        }
+        if ( count < 10 )
+        {
+            continue;
+        }
+        for ( int x = 0; x < 10; ++x )
+        {
+            for ( int i = y; i > 0; --i )
+            {
+                m_buffer[x][i] = m_buffer[x][i-1];
+            }
+        }
+    }
+    for ( int x = 0; x < 10; ++x )
+    {
+        for ( int y = 0; y < 20; ++y )
+        {
+            m_arena[x][y] = m_buffer[x][y];
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+bool
+Game::isClear()
+{
+    for ( int x = 0; x < 4; ++x )
+    {
+        for ( int y = 0; y < 4; ++y )
+        {
+            if ( ! m_piece[x][y] )
+            {
+                continue;
+            }
+            for ( int i = m_row + y - 4; i > 0; --i )
+            {
+                if ( m_buffer[m_col + x - 3][i] )
+                {
+                    return false;
+                }
+            }
+            break;
+        }
+    }
+
+    return true;
 }
 
 //==============================================================================

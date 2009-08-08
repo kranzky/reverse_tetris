@@ -157,7 +157,7 @@ Engine::start()
     {
         _loadData();
         init();
-        switchContext( STATE_GAME );
+        switchContext( STATE_SPLASH );
         m_hge->System_Start();
     }
     else
