@@ -72,6 +72,10 @@ Game::init()
         {
             m_arena[x][y] = false;
             m_buffer[x][y] = false;
+            if ( y > 15 )
+            {
+                m_arena[x][y] = ( hge->Random_Int( 0, 1 ) == 0 );
+            }
         }
     }
 
@@ -101,19 +105,6 @@ Game::update( float dt )
     if ( Engine::instance()->isPaused() )
     {
         return false;
-    }
-
-    clearPiece();
-
-    for ( int i = 0; i < 8; i += 2 )
-    {
-        int x( PIECE[m_index][i] ), y( PIECE[m_index][i+1] + 1 );
-        for ( int j = 0; j < m_rotate; ++j )
-        {
-            b2Swap( x, y );
-            y = 3 - y;
-        }
-        m_piece[x][y]= true;
     }
 
     if ( pad.isConnected() )
@@ -199,6 +190,19 @@ Game::update( float dt )
         }
     }
 
+    clearPiece();
+
+    for ( int i = 0; i < 8; i += 2 )
+    {
+        int x( PIECE[m_index][i] ), y( PIECE[m_index][i+1] + 1 );
+        for ( int j = 0; j < m_rotate; ++j )
+        {
+            b2Swap( x, y );
+            y = 3 - y;
+        }
+        m_piece[x][y]= true;
+    }
+
     checkBorders();
    
     for ( int x = 0; x < 10; ++x )
@@ -216,17 +220,7 @@ Game::update( float dt )
         m_row += 1;
     }
 
-    for ( int x = 0; x < 4; ++x )
-    {
-        for ( int y = 0; y < 4; ++y )
-        {
-            if ( ! m_piece[x][y] )
-            {
-                continue;
-            }
-            m_buffer[m_col + x - 3][m_row + y - 3] = true;
-        }
-    }
+    // Add rows, starting at the bottom, to accomodate the piece
 
     return false;
 }
@@ -259,6 +253,7 @@ Game::render()
     hgeSprite * black( rm->GetSprite( "empty" ) );
     hgeSprite * white( rm->GetSprite( "tile" ) );
 
+    white->SetColor( 0xFFFFFFFF );
     for ( int x = 0; x < 10; ++x )
     {
         for ( int y = 0; y < 20; ++y )
@@ -269,6 +264,7 @@ Game::render()
                               0.0f, 0.1f );
         }
     }
+    white->SetColor( 0xFFFFFF00 );
     for ( int x = 0; x < 4; ++x )
     {
         for ( int y = 0; y < 4; ++y )
@@ -276,6 +272,21 @@ Game::render()
             hgeSprite * sprite( m_piece[x][y] ? white : black );
             sprite->RenderEx( ( x - 1.5f + 12.0f ) * 3.2f,
                               ( y - 1.5f ) * 3.2f,
+                              0.0f, 0.1f );
+        }
+    }
+    white->SetColor( 0xCCFFFF00 );
+    for ( int x = 0; x < 4; ++x )
+    {
+        for ( int y = 0; y < 4; ++y )
+        {
+            hgeSprite * sprite( m_piece[x][y] ? white : black );
+            if ( ! m_piece[x][y] )
+            {
+                continue;
+            }
+            sprite->RenderEx( ( m_col + x - 7.5f ) * 3.2f,
+                              ( m_row + y - 12.5f ) * 3.2f,
                               0.0f, 0.1f );
         }
     }
@@ -398,6 +409,29 @@ Game::checkBottom()
 bool
 Game::blankBelow()
 {
+    int low( 0 );
+    for ( int x = 0; x < 4; ++x )
+    {
+        for ( int y = 0; y < 4; ++y )
+        {
+            if ( m_piece[x][y] )
+			{
+                if ( y > low )
+                {
+                    low = y;
+                }
+            }
+        }
+    }
+
+    for ( int x = 0; x < 10; ++x )
+    {
+        if ( m_buffer[x][m_row + low - 2] )
+        {
+            return false;
+        }
+    }
+
     return true;
 }
 
