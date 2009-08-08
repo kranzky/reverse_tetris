@@ -29,6 +29,12 @@ class Game : public Context
 
   private:
     void clearPiece();
+    void checkBorders();
+    bool checkLeft();
+    bool checkRight();
+    bool checkTop();
+    bool checkBottom();
+    bool blankBelow();
 
     bool m_buffer[10][20];
     bool m_arena[10][20];

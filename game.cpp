@@ -121,18 +121,22 @@ Game::update( float dt )
         if ( pad.buttonDown( XPAD_BUTTON_X ) )
         {
             m_index = ( m_index + 6 ) % 7;
+            m_row = 1;
         }
         if ( pad.buttonDown( XPAD_BUTTON_B ) )
         {
             m_index = ( m_index + 1 ) % 7;
+            m_row = 1;
         }
         if ( pad.buttonDown( XPAD_BUTTON_LEFT_SHOULDER ) )
         {
             m_rotate = ( m_rotate + 3 ) % 4;
+            m_row = 1;
         }
         if ( pad.buttonDown( XPAD_BUTTON_RIGHT_SHOULDER ) )
         {
             m_rotate = ( m_rotate + 1 ) % 4;
+            m_row = 1;
         }
         if ( pad.buttonDown( XPAD_BUTTON_DPAD_UP ) )
         {
@@ -145,10 +149,12 @@ Game::update( float dt )
         if ( pad.buttonDown( XPAD_BUTTON_DPAD_LEFT ) )
         {
             m_col = ( m_col + 12 ) % 13;
+            m_row = 1;
         }
         if ( pad.buttonDown( XPAD_BUTTON_DPAD_RIGHT ) )
         {
             m_col = ( m_col + 1 ) % 13;
+            m_row = 1;
         }
     }
     else
@@ -156,18 +162,22 @@ Game::update( float dt )
         if ( Engine::hge()->Input_KeyDown( HGEK_A ) )
         {
             m_index = ( m_index + 6 ) % 7;
+            m_row = 1;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_D ) )
         {
             m_index = ( m_index + 1 ) % 7;
+            m_row = 1;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_W ) )
         {
             m_rotate = ( m_rotate + 3 ) % 4;
+            m_row = 1;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_S ) )
         {
             m_rotate = ( m_rotate + 1 ) % 4;
+            m_row = 1;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_UP ) )
         {
@@ -180,73 +190,17 @@ Game::update( float dt )
         if ( Engine::hge()->Input_KeyDown( HGEK_LEFT ) )
         {
             m_col = ( m_col + 12 ) % 13;
+            m_row = 1;
         }
         if ( Engine::hge()->Input_KeyDown( HGEK_RIGHT ) )
         {
             m_col = ( m_col + 1 ) % 13;
+            m_row = 1;
         }
     }
 
-    if ( m_col < 3 )
-    {
-        for ( int x = 0; x < 3 - m_col; ++x )
-        {
-            for ( int y = 0; y < 4; ++y )
-            {
-                if ( m_piece[x][y] )
-                {
-                    m_col += ( 3 - m_col - x );
-                    goto done_left_check;
-                }
-            }
-        }
-    }
-done_left_check:
-    if ( m_row < 3 )
-    {
-        for ( int x = 0; x < 4; ++x )
-        {
-            for ( int y = 0; y < 3 - m_row; ++y )
-            {
-                if ( m_piece[x][y] )
-                {
-                    m_row += ( 3 - m_row - y );
-                    goto done_top_check;
-                }
-            }
-        }
-    }
-done_top_check:
-    if ( m_col > 9 )
-    {
-        for ( int x = 3; x > 12 - m_col; --x )
-        {
-            for ( int y = 0; y < 4; ++y )
-            {
-                if ( m_piece[x][y] )
-                {
-                    m_col -= ( x - 12 + m_col );
-                    goto done_right_check;
-                }
-            }
-        }
-    }
-done_right_check:
-    if ( m_row > 19 )
-    {
-        for ( int x = 0; x < 4; ++x )
-        {
-            for ( int y = 3; y > 22 - m_row; --y )
-            {
-                if ( m_piece[x][y] )
-                {
-                    m_row -= ( y - 22 + m_row );
-                    goto done_bot_check;
-                }
-            }
-        }
-    }
-done_bot_check:
+    checkBorders();
+   
     for ( int x = 0; x < 10; ++x )
     {
         for ( int y = 0; y < 20; ++y )
@@ -254,6 +208,14 @@ done_bot_check:
             m_buffer[x][y] = m_arena[x][y];
         }
     }
+
+    // If the piece has space beneath it, then fall down until we either hit the
+    // bottom or there is something below us.
+    while( ! checkBottom() && blankBelow() )
+    {
+        m_row += 1;
+    }
+
     for ( int x = 0; x < 4; ++x )
     {
         for ( int y = 0; y < 4; ++y )
@@ -332,6 +294,111 @@ Game::clearPiece()
             m_piece[x][y] = false;
         }
     }
+}
+
+//------------------------------------------------------------------------------
+void
+Game::checkBorders()
+{
+    checkLeft();
+    checkRight();
+    checkTop();
+    checkBottom();
+}
+
+//------------------------------------------------------------------------------
+bool
+Game::checkLeft()
+{
+    if ( m_col >= 3 )
+    {
+        return false;
+    }
+    for ( int x = 0; x < 3 - m_col; ++x )
+    {
+        for ( int y = 0; y < 4; ++y )
+        {
+            if ( m_piece[x][y] )
+            {
+                m_col += ( 3 - m_col - x );
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+bool
+Game::checkTop()
+{
+    if ( m_row >= 3 )
+    {
+        return false;
+    }
+    for ( int x = 0; x < 4; ++x )
+    {
+        for ( int y = 0; y < 3 - m_row; ++y )
+        {
+            if ( m_piece[x][y] )
+            {
+                m_row += ( 3 - m_row - y );
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+bool
+Game::checkRight()
+{
+    if ( m_col <= 9 )
+    {
+        return false;
+    }
+    for ( int x = 3; x > 12 - m_col; --x )
+    {
+        for ( int y = 0; y < 4; ++y )
+        {
+            if ( m_piece[x][y] )
+            {
+                m_col -= ( x - 12 + m_col );
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+bool
+Game::checkBottom()
+{
+    if ( m_row <= 19 )
+    {
+        return false;
+    }
+    for ( int x = 0; x < 4; ++x )
+    {
+        for ( int y = 3; y > 22 - m_row; --y )
+        {
+            if ( m_piece[x][y] )
+            {
+                m_row -= ( y - 22 + m_row );
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+bool
+Game::blankBelow()
+{
+    return true;
 }
 
 //==============================================================================
