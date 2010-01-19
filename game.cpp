@@ -381,12 +381,7 @@ Game::clearArena()
         {
             m_arena[x][y] = false;
             m_buffer[x][y] = false;
-            /*
-            if ( y > 15 )
-            {
-                m_arena[x][y] = ( hge->Random_Int( 0, 1 ) == 0 );
-            }
-            */
+			//m_arena[x][y] = ( Engine::hge()->Random_Int( 0, 1 ) == 0 );
         }
     }
 }

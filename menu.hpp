@@ -15,11 +15,11 @@ class hgeGUI;
 enum Control
 {
     CTRL_NONE = 0,
-    CTRL_HELP = 1,
-    CTRL_START = 2,
-    CTRL_SCORE = 3,
-    CTRL_HOME = 4,
-    CTRL_EXIT = 5,
+    CTRL_START = 1,
+	CTRL_HELP = 2,
+	CTRL_SCORE = 3,
+	CTRL_HOME = 4,
+    CTRL_EXIT = 5
 };
 
 //------------------------------------------------------------------------------
