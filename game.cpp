@@ -23,6 +23,10 @@ namespace
         { 0,0,1,0,2,0,1,1 },    // T
         { 1,0,2,0,2,1,3,1 }     // Z
     };
+	const char * LEVEL[] = {
+		"mario",
+		"invader"
+	};
 }
 
 //==============================================================================
@@ -93,6 +97,7 @@ Game::fini()
 bool
 Game::update( float dt )
 {
+	return false;
     const Controller & pad( Engine::instance()->getController() );
     HGE * hge( Engine::hge() );
     ViewPort * vp( Engine::vp() );
@@ -316,6 +321,7 @@ Game::render()
     white->SetColor( 0xFFFFFFFF );
     for ( int y = 0; y < 20; ++y )
     {
+		/*
         int count( 0 );
         for ( int x = 0; x < 10; ++x )
         {
@@ -333,6 +339,7 @@ Game::render()
         {
             white->SetColor( 0xFFFFFFFF );
         }
+		*/
         for ( int x = 0; x < 10; ++x )
         {
             hgeSprite * sprite( m_buffer[x][y] ? white : black );
@@ -375,14 +382,19 @@ Game::render()
 void
 Game::clearArena()
 {
-    for ( int x = 0; x < 10; ++x )
+	hgeResourceManager * rm( Engine::rm() );
+	unsigned char * texture( static_cast< unsigned char * >( rm->GetResource( LEVEL[0] ) ) );
+	unsigned long offset( * ( reinterpret_cast< unsigned long * >( texture + 0xA ) ) );
+	unsigned char * data( texture + offset );
+    for ( int y = 19; y >= 0; --y )
     {
-        for ( int y = 0; y < 20; ++y )
+        for ( int x = 0; x < 10; ++x )
         {
-            m_arena[x][y] = false;
-            m_buffer[x][y] = false;
-			//m_arena[x][y] = ( Engine::hge()->Random_Int( 0, 1 ) == 0 );
+			m_arena[x][y] = ( * data != 0 );
+            m_buffer[x][y] = m_arena[x][y];
+			data += 1;
         }
+		data += 2;
     }
 }
 

@@ -157,7 +157,8 @@ Engine::start()
     {
         _loadData();
         init();
-        switchContext( STATE_SPLASH );
+		// TODO: Splash
+        switchContext( STATE_HELP );
         m_hge->System_Start();
     }
     else

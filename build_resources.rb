@@ -9,7 +9,7 @@ def buildResources( target )
     FileUtils.rm_f( resources_file )
     Zip::ZipFile.open( resources_file, Zip::ZipFile::CREATE) do |zipfile|
         Dir.entries( "Resources" ).each do |filename|
-            next unless filename =~ /\.(png|mod|res|fnt|psi|wav|mp3)$/
+            next unless filename =~ /\.(bmp|png|mod|res|fnt|psi|wav|mp3)$/
             zipfile.add( filename, File.join( "Resources", filename ) )
         end
     end

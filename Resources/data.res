@@ -18,6 +18,10 @@ Texture empty
 {
     filename=empty.png
 }
+Resource mario
+{
+    filename=mario.bmp
+}
 Font menu
 {
     filename=menu.fnt
