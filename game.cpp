@@ -97,7 +97,6 @@ Game::fini()
 bool
 Game::update( float dt )
 {
-	return false;
     const Controller & pad( Engine::instance()->getController() );
     HGE * hge( Engine::hge() );
     ViewPort * vp( Engine::vp() );
